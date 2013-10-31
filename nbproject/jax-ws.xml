@@ -3,8 +3,8 @@
   <services/>
   <clients>
     <client name="MasterWebService">
-      <wsdl-url>http://localhost:65080/PasswordCrackingServer/MasterWebService?wsdl</wsdl-url>
-      <local-wsdl-file>localhost_65080/PasswordCrackingServer/MasterWebService.wsdl</local-wsdl-file>
+      <wsdl-url>http://10.154.2.153:65080/PasswordCrackingServer/MasterWebService?wsdl</wsdl-url>
+      <local-wsdl-file>10.154.2.153_65080/PasswordCrackingServer/MasterWebService.wsdl</local-wsdl-file>
       <package-name>master</package-name>
       <catalog-file>catalog.xml</catalog-file>
       <wsimport-options>

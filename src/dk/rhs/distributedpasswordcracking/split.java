@@ -2,12 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package passwordcrackingslave;
+package dk.rhs.distributedpasswordcracking;
 
-import dk.rhs.distributedpasswordcracking.PasswordFileHandler;
-import dk.rhs.distributedpasswordcracking.UserInfo;
-import dk.rhs.distributedpasswordcracking.UserInfoClearText;
+import com.sun.accessibility.internal.resources.accessibility;
+import static dk.rhs.distributedpasswordcracking.CrackerCentralized.checkSingleWord;
+import static dk.rhs.distributedpasswordcracking.CrackerCentralized.checkWordWithVariations;
+import static dk.rhs.distributedpasswordcracking.SplitDictionary.words;
 import dk.rhs.util.StringUtilities;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,17 +19,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.omg.CORBA.TIMEOUT;
 
 /**
  *
  * @author Artjom
  */
-public class SlaveClient {
+public class split {
 
     static ArrayList<String> words = new ArrayList<String>();
+    static ArrayList<String> wordToSplit = new ArrayList<String>();
+    static ArrayList<List> arrayOfWords = new ArrayList<List>();
     private static MessageDigest messageDigest;
     private static final Logger LOGGER = Logger.getLogger("passwordCracker");
-    static boolean noMoreWords = false;
 
     static {
         try {
@@ -37,25 +42,84 @@ public class SlaveClient {
         }
     }
 
+    private static void readFromFile() throws IOException {
+
+        FileReader fileReader = null;
+        try {
+            fileReader = new FileReader("webster-dictionary.txt");
+
+            final BufferedReader dictionary = new BufferedReader(fileReader);
+            while (true) {
+                final String dictionaryEntry = dictionary.readLine();
+
+                if (dictionaryEntry == null) {
+                    break;
+                }
+                words.add(dictionaryEntry);
+            }
+        } finally {
+            if (fileReader != null) {
+                fileReader.close();
+            }
+        }
+    }
+
     /**
-     * Connects to the server, cracks passwords and sends back the result
-     *
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
+        int newNumber = 1;
         final long startTime = System.currentTimeMillis();
         final List<UserInfo> userInfos = PasswordFileHandler.readPasswordFile("passwords.txt");
-        while (noMoreWords == false) {
-            readyWords();
+        final List<UserInfoClearText> result = new ArrayList<UserInfoClearText>();
+        readFromFile();
+        System.out.println(words.size());
+        splitDictionary();
+        System.out.println("parts: " +arrayOfWords.size());
+        System.out.println(arrayOfWords.get(2));
+     
+//        for (int y = 0; y < arrayOfWords.size(); y++) {
+//            for (int i = 0; i < arrayOfWords.get(y).size(); i++) {
+//                final List<UserInfoClearText> partialResult = checkWordWithVariations(arrayOfWords.get(y).get(i).toString(), userInfos);
+//                result.addAll(partialResult);
+//
+//                System.out.println(arrayOfWords.get(y).get(i));
+//                System.out.println(result);
+////                System.out.println(i);
+//
+//                if (y == newNumber) {
+//                    System.out.println(result);
+//                    newNumber = newNumber + 1;
+//                }
+//            }
+//        }
+        final long endTime = System.currentTimeMillis();
+        final long usedTime = endTime - startTime;
+        System.out.println(result);
+        System.out.println("Used time: " + usedTime / 1000 + " seconds = " + usedTime / 60000.0 + " minutes");
+    }
+
+    private static void splitDictionary() {
+        int startPoint = 0;
+        int lastIndex = words.size();
+        int endPoint = 25000;
+        int jump = endPoint;
+        int numberOfSplits = 0;
+        numberOfSplits = roundUpSplit(lastIndex, endPoint);
+
+        for (int i = 0; i < numberOfSplits; i++) {
+            arrayOfWords.add(words.subList(startPoint, endPoint));
 
 
-            final List<UserInfoClearText> result = new ArrayList<UserInfoClearText>();
-            crackPasswords(userInfos, result);
-            getResults(startTime, result);
-            sendResult2(result.toString());
+            startPoint = startPoint + jump;
+            endPoint = endPoint + jump;
+            if (endPoint > lastIndex) {
+                endPoint = lastIndex;
+                System.out.println("endpoint: "+ endPoint);
+
+            }
+
         }
-
-
     }
 
     /**
@@ -72,11 +136,12 @@ public class SlaveClient {
         final List<UserInfoClearText> result = new ArrayList<UserInfoClearText>();
 
         final String possiblePassword = dictionaryEntry;
-
+//        System.out.println("possible password: " + possiblePassword);
         final List<UserInfoClearText> partialResult = checkSingleWord(userInfos, possiblePassword);
         result.addAll(partialResult);
 
         final String possiblePasswordUpperCase = dictionaryEntry.toUpperCase();
+//        System.out.println("possible Upper: " + possiblePassword);
         final List<UserInfoClearText> partialResultUpperCase = checkSingleWord(userInfos, possiblePasswordUpperCase);
         result.addAll(partialResultUpperCase);
 
@@ -133,65 +198,13 @@ public class SlaveClient {
         return results;
     }
 
-    /**
-     * Ready words take the words sent by server and adds them to and ArrayList
-     */
-    private static void readyWords() {
-        words.clear();
-        List<Object> wordsObject = getWords();
-        if (wordsObject.size() > 0) {
-            System.out.println("Recieved words");
-            
-            for (int i = 0; i < wordsObject.size(); i++) {
-                words.add(wordsObject.get(i).toString());
-                
-            }
-        }
-        
-        else {
-            System.out.println("No more words");
-            noMoreWords= true;
-        }
-    }
-
-    /**
-     * Initiates the method to check words with variations and sends one word at
-     * a time
-     */
-    private static void crackPasswords(final List<UserInfo> userInfos, final List<UserInfoClearText> result) {
-        for (int i = 0; i < words.size(); i++) {
-
-            final List<UserInfoClearText> partialResult = checkWordWithVariations(words.get(i).toString(), userInfos);
-            result.addAll(partialResult);
-        }
-    }
-
-    /**
-     * Gets result and notes the time when the program finishes working
-     *
-     * @param startTime time when program started
-     * @param result result of cracking
-     */
-    private static void getResults(final long startTime, final List<UserInfoClearText> result) {
-        final long endTime = System.currentTimeMillis();
-        final long usedTime = endTime - startTime;
-        if (result.size() == 0) {
-            System.out.println("No passwords found");
+    private static int roundUpSplit(int lastIndex, int endPoint) {
+        int numberOfSplits;
+        if (lastIndex % endPoint > endPoint / 2) {
+            numberOfSplits = lastIndex / endPoint;
         } else {
-            System.out.println(result);
+            numberOfSplits = lastIndex / endPoint + 1;
         }
-        System.out.println("Used time: " + usedTime / 1000 + " seconds = " + usedTime / 60000.0 + " minutes");
-    }
-
-    private static void sendResult2(java.lang.String result) {
-        master.MasterWebService_Service service = new master.MasterWebService_Service();
-        master.MasterWebService port = service.getMasterWebServicePort();
-        port.sendResult2(result);
-    }
-
-    private static java.util.List<java.lang.Object> getWords() {
-        master.MasterWebService_Service service = new master.MasterWebService_Service();
-        master.MasterWebService port = service.getMasterWebServicePort();
-        return port.getWords();
+        return numberOfSplits;
     }
 }

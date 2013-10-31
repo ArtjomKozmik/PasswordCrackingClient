@@ -4,21 +4,90 @@
 <xsd:import namespace="http://master/" schemaLocation="http://localhost:65080/PasswordCrackingServer/MasterWebService?xsd=1"/>
 </xsd:schema>
 </types>
+<message name="sendResult2">
+<part name="parameters" element="tns:sendResult2"/>
+</message>
+<message name="printWords">
+<part name="parameters" element="tns:printWords"/>
+</message>
+<message name="printWordsResponse">
+<part name="parameters" element="tns:printWordsResponse"/>
+</message>
 <message name="hello">
 <part name="parameters" element="tns:hello"/>
 </message>
 <message name="helloResponse">
 <part name="parameters" element="tns:helloResponse"/>
 </message>
+<message name="getWords">
+<part name="parameters" element="tns:getWords"/>
+</message>
+<message name="getWordsResponse">
+<part name="parameters" element="tns:getWordsResponse"/>
+</message>
+<message name="getPasswords">
+<part name="parameters" element="tns:getPasswords"/>
+</message>
+<message name="getPasswordsResponse">
+<part name="parameters" element="tns:getPasswordsResponse"/>
+</message>
 <portType name="MasterWebService">
+<operation name="sendResult2">
+<input wsam:Action="http://master/MasterWebService/sendResult2" message="tns:sendResult2"/>
+</operation>
+<operation name="printWords">
+<input wsam:Action="http://master/MasterWebService/printWordsRequest" message="tns:printWords"/>
+<output wsam:Action="http://master/MasterWebService/printWordsResponse" message="tns:printWordsResponse"/>
+</operation>
 <operation name="hello">
 <input wsam:Action="http://master/MasterWebService/helloRequest" message="tns:hello"/>
 <output wsam:Action="http://master/MasterWebService/helloResponse" message="tns:helloResponse"/>
 </operation>
+<operation name="getWords">
+<input wsam:Action="http://master/MasterWebService/getWordsRequest" message="tns:getWords"/>
+<output wsam:Action="http://master/MasterWebService/getWordsResponse" message="tns:getWordsResponse"/>
+</operation>
+<operation name="getPasswords">
+<input wsam:Action="http://master/MasterWebService/getPasswordsRequest" message="tns:getPasswords"/>
+<output wsam:Action="http://master/MasterWebService/getPasswordsResponse" message="tns:getPasswordsResponse"/>
+</operation>
 </portType>
 <binding name="MasterWebServicePortBinding" type="tns:MasterWebService">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="sendResult2">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+</operation>
+<operation name="printWords">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
 <operation name="hello">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="getWords">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="getPasswords">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

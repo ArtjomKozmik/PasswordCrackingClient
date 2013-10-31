@@ -18,7 +18,7 @@
     </target>
     <target name="wsimport-client-MasterWebService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/MasterWebService"/>
-        <property name="wsdl-MasterWebService" location="xml-resources/web-service-references/MasterWebService/wsdl/localhost_65080/PasswordCrackingServer/MasterWebService.wsdl"/>
+        <property name="wsdl-MasterWebService" location="xml-resources/web-service-references/MasterWebService/wsdl/10.154.2.153_65080/PasswordCrackingServer/MasterWebService.wsdl"/>
         <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/MasterWebService" destdir="${build.generated.dir}/jax-wsCache/MasterWebService" wsdl="${wsdl-MasterWebService}" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" wsdlLocation="http://localhost:65080/PasswordCrackingServer/MasterWebService?wsdl" xnocompile="true" xendorsed="true">
             <depends file="${wsdl-MasterWebService}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/MasterWebService"/>

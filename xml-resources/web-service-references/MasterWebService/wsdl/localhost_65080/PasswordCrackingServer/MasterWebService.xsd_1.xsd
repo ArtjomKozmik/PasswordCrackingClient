@@ -1,8 +1,48 @@
 <?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.3 (tags/2.3-7528; 2013-04-29T19:34:10+0000) JAXWS-RI/2.2.8 JAXWS/2.2 svn-revision#unknown. --><xs:schema xmlns:tns="http://master/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://master/">
 
+<xs:element name="getPasswords" type="tns:getPasswords"/>
+
+<xs:element name="getPasswordsResponse" type="tns:getPasswordsResponse"/>
+
+<xs:element name="getWords" type="tns:getWords"/>
+
+<xs:element name="getWordsResponse" type="tns:getWordsResponse"/>
+
 <xs:element name="hello" type="tns:hello"/>
 
 <xs:element name="helloResponse" type="tns:helloResponse"/>
+
+<xs:element name="printWords" type="tns:printWords"/>
+
+<xs:element name="printWordsResponse" type="tns:printWordsResponse"/>
+
+<xs:element name="sendResult2" type="tns:sendResult2"/>
+
+<xs:complexType name="sendResult2">
+<xs:sequence>
+<xs:element name="result" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getWords">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getWordsResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:anyType" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="printWords">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="printWordsResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
 
 <xs:complexType name="hello">
 <xs:sequence>
@@ -14,5 +54,19 @@
 <xs:sequence>
 <xs:element name="return" type="xs:string" minOccurs="0"/>
 </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getPasswords">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="getPasswordsResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:userInfo" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="userInfo">
+<xs:sequence/>
 </xs:complexType>
 </xs:schema>
